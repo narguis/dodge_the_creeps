@@ -1,0 +1,56 @@
+[gd_scene load_steps=6 format=3 uid="uid://dlr0clltbmd8i"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_wrrl2"]
+[ext_resource type="PackedScene" uid="uid://lrwiqty4s8s4" path="res://mob.tscn" id="2_5gotd"]
+[ext_resource type="PackedScene" uid="uid://dfhgq3wfpt2rb" path="res://player.tscn" id="3_3mony"]
+[ext_resource type="PackedScene" uid="uid://gpau25rpwt4v" path="res://hud.tscn" id="4_yyp6k"]
+
+[sub_resource type="Curve2D" id="Curve2D_gp5ty"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 720, 0, 0, 0, 0, 0, 720, 1056.25, 0, 0, 0, 0, 0, 1056.25, 0, 0, 0, 0, 0, 0)
+}
+point_count = 5
+
+[node name="Main" type="Node"]
+script = ExtResource("1_wrrl2")
+mob_scene = ExtResource("2_5gotd")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0.219608, 0.372549, 0.4, 1)
+
+[node name="Player" parent="." instance=ExtResource("3_3mony")]
+position = Vector2(0, 0)
+
+[node name="MobPath" type="Path2D" parent="."]
+scale = Vector2(1, 0.984615)
+curve = SubResource("Curve2D_gp5ty")
+
+[node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath"]
+visible = false
+
+[node name="MobTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="ScoreTimer" type="Timer" parent="."]
+
+[node name="StartTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="StartPosition" type="Marker2D" parent="."]
+position = Vector2(360, 520)
+
+[node name="HUD" parent="." instance=ExtResource("4_yyp6k")]
+
+[connection signal="hit" from="Player" to="." method="game_over"]
+[connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
+[connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
+[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="start_game" from="HUD" to="." method="new_game"]
